@@ -1,13 +1,13 @@
 /**
-  RangyInputs
-
-  Node plugin for obtaining and manipulating selections within <textarea> and
-  <input type="text"> HTML elements.
-
- @module plugin-rangy-inputs
- @class Plugin.RangyInputs
- @constructor
-
+ * RangyInputs
+ *
+ * Node plugin for obtaining and manipulating selections within <textarea> and
+ * <input type="text"> HTML elements.
+ *
+ * @module plugin-rangy-inputs
+ * @class Plugin.RangyInputs
+ * @constructor
+ *
  **/
 
 /**
@@ -20,6 +20,9 @@ function RangyInputs(config) {
 
 /**
  * @static
+ * @param {Object} node
+ * @param {Number} start start position
+ * @param {Number} end end position
  */
 function adjustOffsets(node, start, end) {
     if (start < 0) {
@@ -40,6 +43,9 @@ function adjustOffsets(node, start, end) {
 
 /**
  * @static
+ * @param {Object} node
+ * @param {Number} start start position
+ * @param {Number} end end position
  */
 function makeSelection(node, start, end) {
     return {
@@ -78,6 +84,13 @@ RangyInputs.prototype = {
         return makeSelection(node, start, end);
     },
 
+    /**
+     * Selects the text within the text input or textarea element between the
+     * specified start and end character indices.
+     *
+     * @param {Number} startOffset
+     * @param {Number} endOffset
+     */
     setSelection: function (startOffset, endOffset) {
         var node = this._node,
         offsets = adjustOffsets(node, startOffset, endOffset);
@@ -88,6 +101,13 @@ RangyInputs.prototype = {
         return this;
     },
 
+    /**
+     * Collapses the selection to an insertion point (caret) either at the
+     * start of the current selection if toStart is true or the end of the
+     * current selection otherwise.
+     *
+     * @param {Boolean} toStart
+     */
     collapseSelection: function (toStart) {
         var node = this._node;
 
@@ -100,8 +120,16 @@ RangyInputs.prototype = {
         return this;
     },
 
-    // common
-
+    /**
+     * Deletes the text within the text input or textarea element between the
+     * specified start and end character indices and optionally places the
+     * caret at the position where the deleted text had been if moveSelection
+     * is true.
+     *
+     * @param {Number} start
+     * @param {number} end
+     * @param {Boolean} [moveSelection]
+     */
     deleteText: function (start, end, moveSelection) {
         var val,
         node = this._node;
@@ -117,6 +145,12 @@ RangyInputs.prototype = {
         return this;
     },
 
+    /**
+     * Deletes the currently selected text within the text input or textarea
+     * element and places the caret at the position where the deleted text had
+     * been.
+     *
+     */
     deleteSelectedText: function () {
         var sel = this.getSelection();
 
@@ -125,6 +159,11 @@ RangyInputs.prototype = {
         return this;
     },
 
+    /**
+     * Deletes the currently selected text within the text input or textarea
+     * element, places the caret at the position where the deleted text had
+     * been and returns the text that was deleted.
+     */
     extractSelectedText: function () {
         var node = this._node,
         sel = this.getSelection(),
@@ -139,6 +178,13 @@ RangyInputs.prototype = {
         return sel.text;
     },
 
+
+    /**
+     * @private
+     * @param {Number} startIndex
+     * @param {String} text
+     * @param {String} [selectionBehaviour]
+     */
     _updateSelectionAfterInsert: function (startIndex, text, selectionBehaviour) {
         var endIndex = startIndex + text.length;
 
@@ -158,6 +204,26 @@ RangyInputs.prototype = {
 
     },
 
+    /**
+     * Inserts the specified text at the specified character position within
+     * the text input or textarea element and optionally updates the selection
+     * depending on the value of selectionBehaviour. Possible values are:
+     *
+     * * `select`: Selects the inserted text
+     * * `collapseToStart`: Collapses the selection to a caret at the
+     *    start of the inserted text
+     * * `collapseToEnd`: Collapses the selection to a caret at the
+     *    end of the inserted text
+     *
+     * If no value is supplied for selectionBehaviour, the
+     * selection is not changed and left at the mercy of the
+     * browser (placing the caret at the start is not uncommon when
+     * the textarea's value is changed).
+     *
+     * @param {String} text
+     * @param {Number} index
+     * @param {String} [selectionBehaviour]
+     */
     insertText: function (text, index, selectionBehaviour) {
         var node = this._node,
         val = node.value;
@@ -171,6 +237,24 @@ RangyInputs.prototype = {
         return this;
     },
 
+    /**
+     * Replaces the currently selected text in the text input or textarea
+     * element with the specified text and optionally updates the selection
+     * depending on the value of selectionBehaviour. Possible values are: 
+     *
+     * * `select`: Selects the inserted text
+     * * `collapseToStart`: Collapses the selection to a caret at the
+     *    start of the inserted text
+     * * `collapseToEnd`: Collapses the selection to a caret at the
+     *    end of the inserted text
+     *
+     * If no value is supplied for selectionBehaviour, "collapseToEnd" is
+     * assumed.
+     *
+     * @param {String} text
+     * @param {Number} index
+     * @param {String} [selectionBehaviour='collapseToEnd']
+     */
     replaceSelectedText: function (text, selectionBehaviour) {
         var node = this._node,
         sel = this.getSelection(),
@@ -182,6 +266,20 @@ RangyInputs.prototype = {
         return this;
     },
 
+    /**
+     * Surrounds the currently selected text in the text input or textarea
+     * element with the specified pieces of text and optionally updates the
+     * selection depending on the value of selectionBehaviour. Possible values
+     * are:
+     * * `select`: Selects the inserted text
+     * * `collapseToStart`: Collapses the selection to a caret at the
+     *    start of the inserted text
+     * * `collapseToEnd`: Collapses the selection to a caret at the
+     *    end of the inserted text
+     * @param {String} before
+     * @param {String} after
+     * @param {String} [selectionBehaviour='select']
+     */
     surroundSelectedText: function (before, after, selectionBehaviour) {
         if (typeof after === "undefined") {
             after = before;
