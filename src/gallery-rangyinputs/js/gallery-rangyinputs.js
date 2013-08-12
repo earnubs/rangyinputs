@@ -242,7 +242,7 @@ RangyInputs.prototype = {
     /**
      * Replaces the currently selected text in the text input or textarea
      * element with the specified text and optionally updates the selection
-     * depending on the value of selectionBehaviour. Possible values are: 
+     * depending on the value of selectionBehaviour. Possible values are:
      *
      * * `select`: Selects the inserted text
      * * `collapseToStart`: Collapses the selection to a caret at the
