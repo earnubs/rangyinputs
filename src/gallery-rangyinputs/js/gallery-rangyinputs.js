@@ -10,13 +10,15 @@
  *
  **/
 
+var RangyInputs;
+
 /**
  *
  * @param {Object} config User config object
  */
-function RangyInputs(config) {
+RangyInputs = function(config) {
     this._node = config.host._node;
-}
+};
 
 /**
  * @static
